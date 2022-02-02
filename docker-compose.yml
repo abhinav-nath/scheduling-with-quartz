@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+
+  source-db:
+    image: postgres:13.4
+    container_name: source-db
+    ports:
+      - "5441:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=sourceDb
+
+  target-db:
+    image: postgres:13.4
+    container_name: target-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: targetDb
+    ports:
+      - "5442:5432"
