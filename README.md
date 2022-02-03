@@ -68,9 +68,11 @@ CREATE TABLE target_products (
 
 Insert data into Source DB
 ```sql
-insert into source_products values(1, 'pen', now(), now());
+insert into source_products values(1, 'rock', now(), now());
 
-insert into source_products values(2, 'pencil', now(), now());
+insert into source_products values(2, 'paper', now(), now());
+
+insert into source_products values(3, 'scissor', now(), now());
 ```
 
 Select statements
