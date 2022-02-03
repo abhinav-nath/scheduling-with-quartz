@@ -46,3 +46,56 @@ Additionally, each step execution contains an `ExecutionContext`, which contains
 Steps are executed sequentially.
 
 `ItemProcessor` is optional.
+
+## SQL statements
+
+Create tables
+```sql
+CREATE TABLE source_products (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name VARCHAR(50),
+    created_at TIMESTAMP,
+    modified_at TIMESTAMP
+);
+
+CREATE TABLE target_products (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name VARCHAR(50),
+    created_at TIMESTAMP,
+    modified_at TIMESTAMP
+);
+```
+
+Insert data into Source DB
+```sql
+insert into source_products values(1, 'pen', now(), now());
+
+insert into source_products values(2, 'pencil', now(), now());
+```
+
+Select statements
+```sql
+select * from target_products;
+
+select * from batch_job_execution;
+
+select * from batch_job_execution_context;
+
+select * from batch_job_execution_params;
+
+select * from batch_job_instance;
+
+select * from batch_step_execution;
+
+select * from batch_step_execution_context;
+```
+
+Clean Up
+```sql
+truncate source_products;
+
+truncate target_products;
+
+drop table source_products;
+drop table target_products;
+```
