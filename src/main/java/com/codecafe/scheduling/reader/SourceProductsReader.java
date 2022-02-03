@@ -5,7 +5,6 @@ import com.codecafe.scheduling.repository.SourceProductsRepository;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Component
@@ -20,13 +19,9 @@ public class SourceProductsReader implements ItemReader<SourceProduct> {
         this.sourceProductsRepository = sourceProductsRepository;
     }
 
-    @PostConstruct
-    private void initialize() {
-        sourceProducts = sourceProductsRepository.findAll();
-    }
-
     @Override
     public SourceProduct read() throws Exception {
+        sourceProducts = sourceProductsRepository.findAll();
         SourceProduct nextProduct = null;
 
         if (nextProductIndex < sourceProducts.size()) {
