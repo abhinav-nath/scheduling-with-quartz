@@ -34,6 +34,12 @@
    insert into source_products values(3, 'scissor', now(), now());
    ```
 
+   Functionality:
+
+   * Currently, the Quartz scheduler is configured to run every 10 seconds.
+   * So, any changes in the `source_products` table will be picked up by the batch job in every 10 seconds.
+   * The batch job will read the `source_products` table, transform product names to uppercase and write in `target_products` table.
+
 4. Select statements
 
    ```sql
