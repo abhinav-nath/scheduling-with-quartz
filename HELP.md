@@ -6,7 +6,7 @@
    docker-compose up -d
    ```
 
-2. Create `source_products` and `target_product` DB tables
+2. Connect to the DB and create `source_products` and `target_product` DB tables
    
    ```sql
    CREATE TABLE source_products (
