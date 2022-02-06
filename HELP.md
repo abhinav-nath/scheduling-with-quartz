@@ -27,11 +27,11 @@
 3. Insert data into Source DB
 
    ```sql
-   insert into source_products values(1, 'rock', now(), now());
+   INSERT INTO source_products VALUES(1, 'rock', now(), now());
    
-   insert into source_products values(2, 'paper', now(), now());
+   INSERT INTO source_products VALUES(2, 'paper', now(), now());
    
-   insert into source_products values(3, 'scissor', now(), now());
+   INSERT INTO source_products VALUES(3, 'scissor', now(), now());
    ```
 
    Functionality:
@@ -43,28 +43,27 @@
 4. Select statements
 
    ```sql
-   select * from target_products;
+   SELECT * FROM target_products;
 
-   select * from batch_job_execution order by start_time desc;
+   SELECT * FROM batch_job_execution ORDER BY start_time DESC;
 
-   select * from batch_job_execution_context order by start_time desc;
+   SELECT * FROM batch_job_execution_context ORDER BY start_time DESC;
 
-   select * from batch_job_execution_params order by start_time desc;
+   SELECT * FROM batch_job_execution_params ORDER BY start_time DESC;
 
-   select * from batch_job_instance order by start_time desc;
+   SELECT * FROM batch_job_instance ORDER BY start_time DESC;
 
-   select * from batch_step_execution order by start_time desc;
+   SELECT * FROM batch_step_execution ORDER BY start_time DESC;
 
-   select * from batch_step_execution_context order by start_time desc;
+   SELECT * FROM batch_step_execution_context ORDER BY start_time DESC;
    ```
 
-5. Clean Up
+5. Clean Up (Optional)
 
    ```sql
-   truncate source_products;
+   TRUNCATE source_products;
+   TRUNCATE target_products;
    
-   truncate target_products;
-   
-   drop table source_products;
-   drop table target_products;
+   DROP TABLE source_products;
+   DROP TABLE target_products;
    ```
