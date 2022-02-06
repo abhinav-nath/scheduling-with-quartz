@@ -7,7 +7,7 @@
    ```
 
 2. Connect to the DB and create `source_products` and `target_product` DB tables
-   
+
    ```sql
    CREATE TABLE source_products (
        id INTEGER NOT NULL PRIMARY KEY,
@@ -16,6 +16,12 @@
        modified_at TIMESTAMP
    );
    
+   CREATE INDEX idx_source_products_created_at
+   ON source_products(created_at);
+   
+   CREATE INDEX idx_source_products_modified_at
+   ON source_products(modified_at);
+
    CREATE TABLE target_products (
        id INTEGER NOT NULL PRIMARY KEY,
        name VARCHAR(50),
@@ -28,9 +34,9 @@
 
    ```sql
    INSERT INTO source_products VALUES(1, 'rock', now(), now());
-   
+
    INSERT INTO source_products VALUES(2, 'paper', now(), now());
-   
+
    INSERT INTO source_products VALUES(3, 'scissor', now(), now());
    ```
 
@@ -47,15 +53,15 @@
 
    SELECT * FROM batch_job_execution ORDER BY start_time DESC;
 
-   SELECT * FROM batch_job_execution_context ORDER BY start_time DESC;
-
-   SELECT * FROM batch_job_execution_params ORDER BY start_time DESC;
-
-   SELECT * FROM batch_job_instance ORDER BY start_time DESC;
-
+   SELECT * FROM batch_job_execution_context;
+   
+   SELECT * FROM batch_job_execution_params;
+   
+   SELECT * FROM batch_job_instance;
+   
    SELECT * FROM batch_step_execution ORDER BY start_time DESC;
-
-   SELECT * FROM batch_step_execution_context ORDER BY start_time DESC;
+   
+   SELECT * FROM batch_step_execution_context;
    ```
 
 5. Clean Up (Optional)
@@ -64,6 +70,20 @@
    TRUNCATE source_products;
    TRUNCATE target_products;
    
+   TRUNCATE batch_job_execution;
+   TRUNCATE batch_job_execution_context;
+   TRUNCATE batch_job_execution_params;
+   TRUNCATE batch_job_instance;
+   TRUNCATE batch_step_execution;
+   TRUNCATE batch_step_execution_context;
+   
    DROP TABLE source_products;
    DROP TABLE target_products;
+   
+   DROP TABLE batch_job_execution CASCADE;
+   DROP TABLE batch_job_execution_context;
+   DROP TABLE batch_job_execution_params;
+   DROP TABLE batch_job_instance;
+   DROP TABLE batch_step_execution CASCADE;
+   DROP TABLE batch_step_execution_context;
    ```

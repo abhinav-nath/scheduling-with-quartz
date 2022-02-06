@@ -20,7 +20,7 @@ public class SourceProductsReader implements ItemReader<SourceProduct> {
     }
 
     @Override
-    public SourceProduct read() throws Exception {
+    public SourceProduct read() {
         sourceProducts = sourceProductsRepository.findAll();
         SourceProduct nextProduct = null;
 
