@@ -30,7 +30,7 @@ public class QuartzJobLauncher extends QuartzJobBean {
                     .addLong("time", System.currentTimeMillis())
                     .toJobParameters();
             JobExecution jobExecution = jobLauncher.run(job, jobParameters);
-            log.info("Job was completed successfully.", job.getName(), jobExecution.getId());
+            log.info("Job [{}] with id [{}] was completed successfully", job.getName(), jobExecution.getId());
         } catch (JobParametersInvalidException | NoSuchJobException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | JobRestartException ex) {
             log.error("Failed to execute job !!!");
             log.error(ex.getMessage());

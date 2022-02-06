@@ -2,11 +2,13 @@ package com.codecafe.scheduling.reader;
 
 import com.codecafe.scheduling.entity.SourceProduct;
 import com.codecafe.scheduling.repository.SourceProductsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 public class SourceProductsReader implements ItemReader<SourceProduct> {
 
@@ -21,6 +23,8 @@ public class SourceProductsReader implements ItemReader<SourceProduct> {
 
     @Override
     public SourceProduct read() {
+        log.info("==> Entered inside SourceProductsReader::read method");
+
         sourceProducts = sourceProductsRepository.findAll();
         SourceProduct nextProduct = null;
 
@@ -31,6 +35,7 @@ public class SourceProductsReader implements ItemReader<SourceProduct> {
             nextProductIndex = 0;
         }
 
+        log.info("<== Exiting from SourceProductsReader::read method with source product [{}]", nextProduct != null ? nextProduct.getName() : null);
         return nextProduct;
     }
 

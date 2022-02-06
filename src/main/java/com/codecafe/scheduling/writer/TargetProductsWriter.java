@@ -2,11 +2,13 @@ package com.codecafe.scheduling.writer;
 
 import com.codecafe.scheduling.entity.TargetProduct;
 import com.codecafe.scheduling.repository.TargetProductsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 public class TargetProductsWriter implements ItemWriter<TargetProduct> {
 
@@ -17,8 +19,10 @@ public class TargetProductsWriter implements ItemWriter<TargetProduct> {
     }
 
     @Override
-    public void write(List<? extends TargetProduct> items) throws Exception {
+    public void write(List<? extends TargetProduct> items) {
+        log.info("==> Entered inside TargetProductsWriter::write method");
         targetProductsRepository.saveAll(items);
+        log.info("<== Exiting from TargetProductsWriter::write method");
     }
 
 }
