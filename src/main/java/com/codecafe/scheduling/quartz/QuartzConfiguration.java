@@ -3,7 +3,6 @@ package com.codecafe.scheduling.quartz;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.quartz.QuartzDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -19,6 +18,7 @@ import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
 import javax.sql.DataSource;
 
+
 @Slf4j
 @Configuration
 public class QuartzConfiguration {
@@ -26,8 +26,11 @@ public class QuartzConfiguration {
     @Value("${scheduler.products.cron:*/10 * * * * ? *}")
     private String schedulerProductsCron;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
+
+    public QuartzConfiguration(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     /*
     Quartz Scheduler Cron Format
@@ -42,46 +45,6 @@ public class QuartzConfiguration {
     [7] : Year
      */
 
-    /*@Bean(name = "jobRepository")
-    public JobRepository jobRepository() {
-        JobRepositoryFactoryBean factoryBean = new JobRepositoryFactoryBean();
-        factoryBean.setDataSource(dataSource);
-        factoryBean.setTransactionManager(platformTransactionManager);
-        factoryBean.setIsolationLevelForCreate("ISOLATION_READ_COMMITTED");
-        factoryBean.setTablePrefix("BATCH_");
-        try {
-            factoryBean.afterPropertiesSet();
-            return factoryBean.getObject();
-        } catch (Exception ex) {
-            log.error("JobRepository bean could not be initialized", ex);
-        }
-        return null;
-    }*/
-
-    /*@Bean
-    public JobLauncher jobLauncher() {
-        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
-        jobLauncher.setJobRepository(jobRepository());
-        return jobLauncher;
-    }*/
-
-    /*@Bean
-    public JobOperator jobOperator() {
-        SimpleJobOperator jobOperator = new SimpleJobOperator();
-        jobOperator.setJobExplorer(jobExplorer);
-        jobOperator.setJobLauncher(jobLauncher());
-        jobOperator.setJobRegistry(jobRegistry);
-        jobOperator.setJobRepository(jobRepository());
-        return jobOperator;
-    }*/
-
-   /*@Bean
-    public JobFactory jobFactory(ApplicationContext applicationContext) {
-        AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
-        jobFactory.setApplicationContext(applicationContext);
-        return jobFactory;
-    }*/
-
     @Bean
     public SpringBeanJobFactory springBeanJobFactory() {
         AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
@@ -93,7 +56,6 @@ public class QuartzConfiguration {
 
     @Bean
     public SchedulerFactoryBean scheduler(Trigger trigger, JobDetail job, DataSource quartzDataSource, SpringBeanJobFactory jobFactory) {
-
         SchedulerFactoryBean schedulerFactory = new SchedulerFactoryBean();
         schedulerFactory.setConfigLocation(new ClassPathResource("quartz.properties"));
 

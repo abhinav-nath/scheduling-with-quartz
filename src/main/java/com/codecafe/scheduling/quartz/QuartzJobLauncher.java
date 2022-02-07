@@ -20,10 +20,10 @@ import org.springframework.stereotype.Component;
 public class QuartzJobLauncher extends QuartzJobBean {
 
     @Autowired
-    private JobLauncher jobLauncher;
+    private Job job;
 
     @Autowired
-    private Job job;
+    private JobLauncher jobLauncher;
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) {
