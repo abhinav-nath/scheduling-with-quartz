@@ -38,6 +38,8 @@
    INSERT INTO source_products VALUES(2, 'paper', now(), now());
 
    INSERT INTO source_products VALUES(3, 'scissor', now(), now());
+
+   INSERT INTO source_products VALUES(4, 'pencil', now(), now());
    ```
 
    Functionality:
@@ -111,17 +113,17 @@
    TRUNCATE batch_step_execution;
    TRUNCATE batch_step_execution_context;
 
-   TRUNCATE qrtz_blob_triggers;
-   TRUNCATE qrtz_calendars;
-   TRUNCATE qrtz_cron_triggers;
-   TRUNCATE qrtz_fired_triggers;
-   TRUNCATE qrtz_job_details;
-   TRUNCATE qrtz_locks;
-   TRUNCATE qrtz_paused_trigger_grps;
-   TRUNCATE qrtz_scheduler_state;
-   TRUNCATE qrtz_simple_triggers;
-   TRUNCATE qrtz_simprop_triggers;
-   TRUNCATE qrtz_triggers;
+   TRUNCATE qrtz_blob_triggers CASCADE;
+   TRUNCATE qrtz_calendars CASCADE;
+   TRUNCATE qrtz_cron_triggers CASCADE;
+   TRUNCATE qrtz_fired_triggers CASCADE;
+   TRUNCATE qrtz_job_details CASCADE;
+   TRUNCATE qrtz_locks CASCADE;
+   TRUNCATE qrtz_paused_trigger_grps CASCADE;
+   TRUNCATE qrtz_scheduler_state CASCADE;
+   TRUNCATE qrtz_simple_triggers CASCADE;
+   TRUNCATE qrtz_simprop_triggers CASCADE;
+   TRUNCATE qrtz_triggers CASCADE;
    ```
 
    Drop
@@ -137,15 +139,15 @@
    DROP TABLE batch_step_execution CASCADE;
    DROP TABLE batch_step_execution_context;
 
-   DROP TABLE qrtz_blob_triggers;
-   DROP TABLE qrtz_calendars;
-   DROP TABLE qrtz_cron_triggers;
-   DROP TABLE qrtz_fired_triggers;
-   DROP TABLE qrtz_job_details;
-   DROP TABLE qrtz_locks;
-   DROP TABLE qrtz_paused_trigger_grps;
-   DROP TABLE qrtz_scheduler_state;
-   DROP TABLE qrtz_simple_triggers;
-   DROP TABLE qrtz_simprop_triggers;
-   DROP TABLE qrtz_triggers;
+   DROP TABLE qrtz_blob_triggers CASCADE;
+   DROP TABLE qrtz_calendars CASCADE;
+   DROP TABLE qrtz_cron_triggers CASCADE;
+   DROP TABLE qrtz_fired_triggers CASCADE;
+   DROP TABLE qrtz_job_details CASCADE;
+   DROP TABLE qrtz_locks CASCADE;
+   DROP TABLE qrtz_paused_trigger_grps CASCADE;
+   DROP TABLE qrtz_scheduler_state CASCADE;
+   DROP TABLE qrtz_simple_triggers CASCADE;
+   DROP TABLE qrtz_simprop_triggers CASCADE;
+   DROP TABLE qrtz_triggers CASCADE;
    ```
