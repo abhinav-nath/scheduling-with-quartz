@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManagerFactory;
+import java.util.List;
 
 @Configuration
 @EnableBatchProcessing
@@ -46,7 +47,7 @@ public class BatchConfiguration {
     @Bean
     public Step ingestProductsStep(SourceProductsReader reader, SourceProductsProcessor processor, TargetProductsWriter writer) {
         return stepBuilderFactory.get("ingestProductsStep")
-                .<SourceProduct, TargetProduct>chunk(10)
+                .<List<SourceProduct>, List<TargetProduct>>chunk(10)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

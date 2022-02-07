@@ -10,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class SourceProductsReader implements ItemReader<SourceProduct> {
+public class SourceProductsReader implements ItemReader<List<SourceProduct>> {
 
     private int nextProductIndex;
     private List<SourceProduct> sourceProducts;
@@ -22,11 +22,11 @@ public class SourceProductsReader implements ItemReader<SourceProduct> {
     }
 
     @Override
-    public SourceProduct read() {
+    public List<SourceProduct> read() {
         log.info("==> Entered inside SourceProductsReader::read method");
 
         sourceProducts = sourceProductsRepository.findAll();
-        SourceProduct nextProduct = null;
+        /*SourceProduct nextProduct = null;
 
         if (nextProductIndex < sourceProducts.size()) {
             nextProduct = sourceProducts.get(nextProductIndex);
@@ -36,7 +36,8 @@ public class SourceProductsReader implements ItemReader<SourceProduct> {
         }
 
         log.info("<== Exiting from SourceProductsReader::read method with source product [{}]", nextProduct != null ? nextProduct.getName() : null);
-        return nextProduct;
+        */
+        return sourceProducts;
     }
 
 }

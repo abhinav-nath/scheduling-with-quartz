@@ -10,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class TargetProductsWriter implements ItemWriter<TargetProduct> {
+public class TargetProductsWriter implements ItemWriter<List<TargetProduct>> {
 
     private final TargetProductsRepository targetProductsRepository;
 
@@ -19,9 +19,9 @@ public class TargetProductsWriter implements ItemWriter<TargetProduct> {
     }
 
     @Override
-    public void write(List<? extends TargetProduct> items) {
+    public void write(List<? extends List<TargetProduct>> items) throws Exception {
         log.info("==> Entered inside TargetProductsWriter::write method");
-        targetProductsRepository.saveAll(items);
+        targetProductsRepository.saveAll((List<TargetProduct>) items);
         log.info("<== Exiting from TargetProductsWriter::write method");
     }
 

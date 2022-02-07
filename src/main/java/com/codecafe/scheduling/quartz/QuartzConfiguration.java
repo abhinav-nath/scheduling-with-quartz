@@ -1,42 +1,33 @@
 package com.codecafe.scheduling.quartz;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.configuration.JobLocator;
-import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
-import org.springframework.batch.core.launch.support.SimpleJobOperator;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.JobDetail;
+import org.quartz.Trigger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.quartz.QuartzDataSource;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
 
+@Slf4j
 @Configuration
 public class QuartzConfiguration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(QuartzConfiguration.class);
-
-    private final DataSource dataSource;
-    private final JobExplorer jobExplorer;
-    private final JobLocator jobLocator;
-    private final JobRegistry jobRegistry;
-    private final PlatformTransactionManager platformTransactionManager;
-
     @Value("${scheduler.products.cron:*/10 * * * * ? *}")
     private String schedulerProductsCron;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /*
     Quartz Scheduler Cron Format
@@ -51,23 +42,7 @@ public class QuartzConfiguration {
     [7] : Year
      */
 
-    public QuartzConfiguration(DataSource dataSource, JobExplorer jobExplorer, JobLocator jobLocator,
-                               JobRegistry jobRegistry, PlatformTransactionManager platformTransactionManager) {
-        this.dataSource = dataSource;
-        this.jobExplorer = jobExplorer;
-        this.jobLocator = jobLocator;
-        this.jobRegistry = jobRegistry;
-        this.platformTransactionManager = platformTransactionManager;
-    }
-
-    @Bean
-    public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
-        JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor = new JobRegistryBeanPostProcessor();
-        jobRegistryBeanPostProcessor.setJobRegistry(jobRegistry);
-        return jobRegistryBeanPostProcessor;
-    }
-
-    @Bean(name = "jobRepository")
+    /*@Bean(name = "jobRepository")
     public JobRepository jobRepository() {
         JobRepositoryFactoryBean factoryBean = new JobRepositoryFactoryBean();
         factoryBean.setDataSource(dataSource);
@@ -78,19 +53,19 @@ public class QuartzConfiguration {
             factoryBean.afterPropertiesSet();
             return factoryBean.getObject();
         } catch (Exception ex) {
-            LOG.error("JobRepository bean could not be initialized", ex);
+            log.error("JobRepository bean could not be initialized", ex);
         }
         return null;
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     public JobLauncher jobLauncher() {
         SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
         jobLauncher.setJobRepository(jobRepository());
         return jobLauncher;
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     public JobOperator jobOperator() {
         SimpleJobOperator jobOperator = new SimpleJobOperator();
         jobOperator.setJobExplorer(jobExplorer);
@@ -98,34 +73,63 @@ public class QuartzConfiguration {
         jobOperator.setJobRegistry(jobRegistry);
         jobOperator.setJobRepository(jobRepository());
         return jobOperator;
+    }*/
+
+   /*@Bean
+    public JobFactory jobFactory(ApplicationContext applicationContext) {
+        AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
+        jobFactory.setApplicationContext(applicationContext);
+        return jobFactory;
+    }*/
+
+    @Bean
+    public SpringBeanJobFactory springBeanJobFactory() {
+        AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
+        log.debug("Configuring Job factory");
+
+        jobFactory.setApplicationContext(applicationContext);
+        return jobFactory;
+    }
+
+    @Bean
+    public SchedulerFactoryBean scheduler(Trigger trigger, JobDetail job, DataSource quartzDataSource, SpringBeanJobFactory jobFactory) {
+
+        SchedulerFactoryBean schedulerFactory = new SchedulerFactoryBean();
+        schedulerFactory.setConfigLocation(new ClassPathResource("quartz.properties"));
+
+        log.debug("Setting the Scheduler up");
+        schedulerFactory.setJobFactory(jobFactory);
+        schedulerFactory.setJobDetails(job);
+        schedulerFactory.setTriggers(trigger);
+
+        // Comment the following line to use the default Quartz job store.
+        schedulerFactory.setDataSource(quartzDataSource);
+
+        return schedulerFactory;
+    }
+
+    @Bean
+    @QuartzDataSource
+    @ConfigurationProperties(prefix = "spring.datasource")
+    public DataSource quartzDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    @Bean
+    public CronTriggerFactoryBean cronTriggerFactoryBean() {
+        CronTriggerFactoryBean factory = new CronTriggerFactoryBean();
+        factory.setJobDetail(jobDetailFactoryBean().getObject());
+        factory.setCronExpression(schedulerProductsCron);
+        factory.setName("cronTriggerFactoryBean");
+        return factory;
     }
 
     @Bean
     public JobDetailFactoryBean jobDetailFactoryBean() {
         JobDetailFactoryBean factory = new JobDetailFactoryBean();
         factory.setJobClass(QuartzJobLauncher.class);
-        Map<String, Object> map = new HashMap<>();
-        map.put("jobName", "importProductsJob");
-        map.put("jobLauncher", jobLauncher());
-        map.put("jobLocator", jobLocator);
-        factory.setJobDataAsMap(map);
+        factory.setDurability(true);
         return factory;
-    }
-
-    @Bean
-    public CronTriggerFactoryBean cronTriggerFactoryBean() {
-        CronTriggerFactoryBean stFactory = new CronTriggerFactoryBean();
-        stFactory.setJobDetail(jobDetailFactoryBean().getObject());
-        stFactory.setCronExpression(schedulerProductsCron);
-        stFactory.setName("cronTriggerFactoryBean");
-        return stFactory;
-    }
-
-    @Bean
-    public SchedulerFactoryBean schedulerBean() {
-        SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
-        scheduler.setTriggers(cronTriggerFactoryBean().getObject());
-        return scheduler;
     }
 
 }
