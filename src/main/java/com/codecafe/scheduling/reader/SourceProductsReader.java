@@ -66,7 +66,7 @@ public class SourceProductsReader implements ItemReader<SourceProduct> {
 
         if (lastCompletedJobInstanceOptional.isPresent()) {
             log.info("######## Last Job [{}] status: [{}]", lastCompletedJobInstanceOptional.get().getInstanceId(), jobExplorer.getJobExecution(lastCompletedJobInstanceOptional.get().getInstanceId()).getStatus());
-            lastCompletedJobTime = Optional.of(jobExplorer.getLastJobExecution(jobExplorer.getJobInstance(lastCompletedJobInstanceOptional.get().getInstanceId())).getEndTime());
+            lastCompletedJobTime = Optional.of(jobExplorer.getLastJobExecution(jobExplorer.getJobInstance(lastCompletedJobInstanceOptional.get().getInstanceId())).getStartTime());
         }
         return lastCompletedJobTime;
     }

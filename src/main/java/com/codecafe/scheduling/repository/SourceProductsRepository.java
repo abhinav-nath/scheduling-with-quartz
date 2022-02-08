@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface SourceProductsRepository extends JpaRepository<SourceProduct, Integer> {
 
-    @Query(value = "SELECT * FROM source_products sp WHERE sp.created_at > :lastSuccessfulJobRun", nativeQuery = true)
+    @Query(value = "SELECT * FROM source_products sp WHERE sp.created_at >= :lastSuccessfulJobRun", nativeQuery = true)
     List<SourceProduct> findByLastSuccessfulJobRun(Date lastSuccessfulJobRun);
 
 }
