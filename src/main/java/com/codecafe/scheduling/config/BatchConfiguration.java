@@ -2,7 +2,7 @@ package com.codecafe.scheduling.config;
 
 import com.codecafe.scheduling.entity.SourceProduct;
 import com.codecafe.scheduling.entity.TargetProduct;
-import com.codecafe.scheduling.listener.JobCompletionNotificationListener;
+import com.codecafe.scheduling.listener.JobExecutionListener;
 import com.codecafe.scheduling.processor.SourceProductsProcessor;
 import com.codecafe.scheduling.reader.SourceProductsReader;
 import com.codecafe.scheduling.writer.TargetProductsWriter;
@@ -43,7 +43,7 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Job importProductsJob(JobCompletionNotificationListener listener, Step ingestProductsStep) {
+    public Job importProductsJob(JobExecutionListener listener, Step ingestProductsStep) {
         return jobBuilderFactory.get("importProductsJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)

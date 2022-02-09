@@ -7,9 +7,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter
 @Entity(name = "source_products")
 public class SourceProduct {
 
