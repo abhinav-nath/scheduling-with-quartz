@@ -40,12 +40,14 @@
    INSERT INTO source_products VALUES(3, 'scissor', now(), now());
 
    INSERT INTO source_products VALUES(4, 'pencil', now(), now());
+
+   INSERT INTO source_products VALUES(5, 'eraser', now(), now());
    ```
 
    Functionality:
 
    * Currently, the Quartz scheduler is configured to run every 10 seconds.
-   * So, any changes in the `source_products` table will be picked up by the batch job in every 10 seconds.
+   * So, any changes in the `source_products` table will be picked up by the batch job in every 30 seconds.
    * The batch job will read the `source_products` table, transform product names to uppercase and write in `target_products` table.
 
 4. Select statements
