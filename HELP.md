@@ -1,4 +1,6 @@
-# How to run the application
+# How to test the application
+
+* [SQL queries to be used](./src/main/resources/sql_queries.sql)
 
 1. Bring a Postgres DB up using docker-compose.yml
 
@@ -6,150 +8,11 @@
    docker-compose up -d
    ```
 
-2. Connect to the DB and create `source_products` and `target_product` DB tables
+2. Connect to the DB and create `source_products` and `target_product` DB tables.
 
-   ```sql
-   CREATE TABLE source_products (
-       id INTEGER NOT NULL PRIMARY KEY,
-       name VARCHAR(50),
-       created_at TIMESTAMP,
-       modified_at TIMESTAMP
-   );
-   
-   CREATE INDEX idx_source_products_created_at
-   ON source_products(created_at);
-   
-   CREATE INDEX idx_source_products_modified_at
-   ON source_products(modified_at);
+3. Insert a new record in the `source_products` table, batch job will pick the record (as per the quartz schedule) and write it into `target_products` table.
 
-   CREATE TABLE target_products (
-       id INTEGER NOT NULL PRIMARY KEY,
-       name VARCHAR(50),
-       created_at TIMESTAMP,
-       modified_at TIMESTAMP
-   );
-   ```
+4. If any record is updated, make sure to set `modified_at` as `now()` in the `source_products` table so that it can be picked by the job and same update is made in the `target_products` table.
 
-3. Insert data into Source DB
-
-   ```sql
-   INSERT INTO source_products VALUES(1, 'rock', now(), now());
-
-   INSERT INTO source_products VALUES(2, 'paper', now(), now());
-
-   INSERT INTO source_products VALUES(3, 'scissor', now(), now());
-
-   INSERT INTO source_products VALUES(4, 'pencil', now(), now());
-
-   INSERT INTO source_products VALUES(5, 'eraser', now(), now());
-   ```
-
-   Functionality:
-
-   * Currently, the Quartz scheduler is configured to run every 10 seconds.
-   * So, any changes in the `source_products` table will be picked up by the batch job in every 30 seconds.
-   * The batch job will read the `source_products` table, transform product names to uppercase and write in `target_products` table.
-
-4. Select statements
-
-   Target Products
-
-   ```sql
-   SELECT * FROM target_products;
-   ```
-
-   Spring Batch Tables
-
-   ```sql
-   SELECT * FROM batch_job_execution ORDER BY start_time DESC;
-
-   SELECT * FROM batch_job_execution_context;
-   
-   SELECT * FROM batch_job_execution_params;
-   
-   SELECT * FROM batch_job_instance;
-   
-   SELECT * FROM batch_step_execution ORDER BY start_time DESC;
-   
-   SELECT * FROM batch_step_execution_context;
-   ```
-
-   Quartz Tables
-
-   ```sql
-   SELECT * FROM qrtz_blob_triggers;
-
-   SELECT * FROM qrtz_calendars;
-
-   SELECT * FROM qrtz_cron_triggers;
-
-   SELECT * FROM qrtz_fired_triggers;
-
-   SELECT * FROM qrtz_job_details;
-
-   SELECT * FROM qrtz_locks;
-
-   SELECT * FROM qrtz_paused_trigger_grps;
-
-   SELECT * FROM qrtz_scheduler_state;
-
-   SELECT * FROM qrtz_simple_triggers;
-
-   SELECT * FROM qrtz_simprop_triggers;
-
-   SELECT * FROM qrtz_triggers;
-   ```
-
-5. Clean Up (Optional)
-
-   Truncate
-
-   ```sql
-   TRUNCATE source_products;
-   TRUNCATE target_products;
-
-   TRUNCATE batch_job_execution;
-   TRUNCATE batch_job_execution_context;
-   TRUNCATE batch_job_execution_params;
-   TRUNCATE batch_job_instance;
-   TRUNCATE batch_step_execution;
-   TRUNCATE batch_step_execution_context;
-
-   TRUNCATE qrtz_blob_triggers CASCADE;
-   TRUNCATE qrtz_calendars CASCADE;
-   TRUNCATE qrtz_cron_triggers CASCADE;
-   TRUNCATE qrtz_fired_triggers CASCADE;
-   TRUNCATE qrtz_job_details CASCADE;
-   TRUNCATE qrtz_locks CASCADE;
-   TRUNCATE qrtz_paused_trigger_grps CASCADE;
-   TRUNCATE qrtz_scheduler_state CASCADE;
-   TRUNCATE qrtz_simple_triggers CASCADE;
-   TRUNCATE qrtz_simprop_triggers CASCADE;
-   TRUNCATE qrtz_triggers CASCADE;
-   ```
-
-   Drop
-
-   ```sql
-   DROP TABLE source_products;
-   DROP TABLE target_products;
-
-   DROP TABLE batch_job_execution CASCADE;
-   DROP TABLE batch_job_execution_context;
-   DROP TABLE batch_job_execution_params;
-   DROP TABLE batch_job_instance;
-   DROP TABLE batch_step_execution CASCADE;
-   DROP TABLE batch_step_execution_context;
-
-   DROP TABLE qrtz_blob_triggers CASCADE;
-   DROP TABLE qrtz_calendars CASCADE;
-   DROP TABLE qrtz_cron_triggers CASCADE;
-   DROP TABLE qrtz_fired_triggers CASCADE;
-   DROP TABLE qrtz_job_details CASCADE;
-   DROP TABLE qrtz_locks CASCADE;
-   DROP TABLE qrtz_paused_trigger_grps CASCADE;
-   DROP TABLE qrtz_scheduler_state CASCADE;
-   DROP TABLE qrtz_simple_triggers CASCADE;
-   DROP TABLE qrtz_simprop_triggers CASCADE;
-   DROP TABLE qrtz_triggers CASCADE;
-   ```
+5. If any record has to be deleted then set `modfified_at` as `now()` and `is_deleted` as `true`.
+   Batch job will pick this record and will delete it from the `target_products` table.

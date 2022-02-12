@@ -1,6 +1,6 @@
 # Scheduling in Spring using Quartz Scheduler
 
-[How to run the application](./HELP.md "How to run the application")
+[How to test the application](./HELP.md "How to test the application")
 
 ### How does Spring Batch differ from Quartz? Is there a place for them both in a solution?
 _Spring Batch and Quartz have different goals._
