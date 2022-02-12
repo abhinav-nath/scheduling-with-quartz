@@ -1,10 +1,11 @@
--- create source_products and target_product tables
+-- Create source_products and target_product tables
 
 CREATE TABLE source_products (
     id INTEGER NOT NULL PRIMARY KEY,
     name VARCHAR(50),
     created_at TIMESTAMP,
-    modified_at TIMESTAMP
+    modified_at TIMESTAMP,
+    is_deleted BOOLEAN
 );
 
 CREATE INDEX idx_source_products_created_at
@@ -21,18 +22,34 @@ CREATE TABLE target_products (
 );
 
 
--- Insert data into source DB
+-- Insert a new product in source_products table
   
-INSERT INTO source_products VALUES(1, 'rock', now(), now());
+INSERT INTO source_products VALUES(1, 'rock', now(), now(), false);
 
-INSERT INTO source_products VALUES(2, 'paper', now(), now());
+INSERT INTO source_products VALUES(2, 'paper', now(), now(), false);
 
-INSERT INTO source_products VALUES(3, 'scissor', now(), now());
+INSERT INTO source_products VALUES(3, 'scissor', now(), now(), false);
 
-INSERT INTO source_products VALUES(4, 'pencil', now(), now());
+INSERT INTO source_products VALUES(4, 'pencil', now(), now(), false);
 
-INSERT INTO source_products VALUES(5, 'eraser', now(), now());
+INSERT INTO source_products VALUES(5, 'eraser', now(), now(), false);
 
+
+-- Update product in source_products table
+
+UPDATE source_products SET name = 'keyboard' WHERE id = 1;
+
+UPDATE source_products SET name = 'mouse' WHERE id = 2;
+
+
+-- Delete product in source_products table
+
+UPDATE source_products SET modified_at = now(), is_deleted = true WHERE id = 1;
+
+UPDATE source_products SET modified_at = now(), is_deleted = true WHERE id = 2;
+
+
+-- Select from target_products
 
 SELECT * FROM target_products;
 
