@@ -3,6 +3,7 @@ package com.codecafe.scheduling.config;
 import com.codecafe.scheduling.entity.SourceProduct;
 import com.codecafe.scheduling.entity.TargetProduct;
 import com.codecafe.scheduling.listener.JobExecutionListener;
+import com.codecafe.scheduling.model.TargetProductWithAction;
 import com.codecafe.scheduling.processor.SourceProductsProcessor;
 import com.codecafe.scheduling.reader.SourceProductsReader;
 import com.codecafe.scheduling.writer.TargetProductsWriter;
@@ -55,7 +56,7 @@ public class BatchConfiguration {
     @Bean
     public Step ingestProductsStep(SourceProductsReader reader, SourceProductsProcessor processor, TargetProductsWriter writer) {
         return stepBuilderFactory.get("ingestProductsStep")
-                .<SourceProduct, TargetProduct>chunk(10)
+                .<SourceProduct, TargetProductWithAction>chunk(10)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

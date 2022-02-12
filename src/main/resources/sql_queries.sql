@@ -49,6 +49,10 @@ UPDATE source_products SET modified_at = now(), is_deleted = true WHERE id = 1;
 UPDATE source_products SET modified_at = now(), is_deleted = true WHERE id = 2;
 
 
+-- Select from source_products
+
+SELECT * FROM source_products;
+
 -- Select from target_products
 
 SELECT * FROM target_products;
@@ -101,12 +105,12 @@ SELECT * FROM qrtz_triggers;
 TRUNCATE source_products;
 TRUNCATE target_products;
 
-TRUNCATE batch_job_execution;
-TRUNCATE batch_job_execution_context;
-TRUNCATE batch_job_execution_params;
-TRUNCATE batch_job_instance;
-TRUNCATE batch_step_execution;
-TRUNCATE batch_step_execution_context;
+TRUNCATE batch_job_execution CASCADE;
+TRUNCATE batch_job_execution_context CASCADE;
+TRUNCATE batch_job_execution_params CASCADE;
+TRUNCATE batch_job_instance CASCADE;
+TRUNCATE batch_step_execution CASCADE;
+TRUNCATE batch_step_execution_context CASCADE;
 
 TRUNCATE qrtz_blob_triggers CASCADE;
 TRUNCATE qrtz_calendars CASCADE;

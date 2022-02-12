@@ -1,16 +1,15 @@
 package com.codecafe.scheduling.listener;
 
+import com.codecafe.scheduling.entity.BatchJobExecutionDetail;
+import com.codecafe.scheduling.repository.BatchJobRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -18,7 +17,7 @@ import java.util.Optional;
 public class JobExecutionListener extends JobExecutionListenerSupport {
 
     @Autowired
-    private JobExplorer jobExplorer;
+    private BatchJobRepository batchJobRepository;
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
@@ -27,30 +26,28 @@ public class JobExecutionListener extends JobExecutionListenerSupport {
         jobExecution.getExecutionContext().put("lastCompletedJobTime", getLastCompletedJobTime());
     }
 
-    private Date getLastCompletedJobTime() {
+    private Optional<Date> getLastCompletedJobTime() {
         log.info("==> Entered inside JobExecutionListener::getLastCompletedJobTime method");
-        Date lastCompletedJobTime = null;
-        List<JobInstance> jobInstances = jobExplorer.getJobInstances("importProductsJob", 0, 1000);
 
-        Optional<JobInstance> lastCompletedJobInstanceOptional = jobInstances.stream().filter(jobInstance -> {
-            long instanceId = jobInstance.getInstanceId();
-            return BatchStatus.COMPLETED == jobExplorer.getJobExecution(instanceId).getStatus();
-        }).findFirst();
+        Optional<Date> lastCompletedJobTime = Optional.empty();
 
-        if (lastCompletedJobInstanceOptional.isPresent()) {
-            log.info("######## Last Job [{}] status: [{}]", lastCompletedJobInstanceOptional.get().getInstanceId(), jobExplorer.getJobExecution(lastCompletedJobInstanceOptional.get().getInstanceId()).getStatus());
-            lastCompletedJobTime = jobExplorer.getLastJobExecution(jobExplorer.getJobInstance(lastCompletedJobInstanceOptional.get().getInstanceId())).getStartTime();
+        Optional<BatchJobExecutionDetail> lastCompletedJob = batchJobRepository.getLastSuccessfulJob("importProductsJob", "COMPLETED");
+
+        if (lastCompletedJob.isPresent()) {
+            log.info("######## Last Job [{}] status: [{}]", lastCompletedJob.get().getJobExecutionId(), lastCompletedJob.get().getStatus());
+            lastCompletedJobTime = Optional.of(lastCompletedJob.get().getStartTime());
         }
 
         log.info("<== Exiting from JobExecutionListener::getLastCompletedJobTime method");
-
         return lastCompletedJobTime;
     }
 
     @Override
     public void afterJob(JobExecution jobExecution) {
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            log.info("!!! JOB FINISHED! Time to verify the results");
+            log.info("!!! JOB FINISHED! Time to verify the results!");
+        } else {
+            log.info("!!! JOB was not COMPLETED! Time to investigate!");
         }
     }
 

@@ -1,10 +1,11 @@
 package com.codecafe.scheduling.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,7 +16,8 @@ public class SourceProduct {
     private int id;
 
     private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private Date createdAt;
+    private Date modifiedAt;
+    private boolean isDeleted;
 
 }
