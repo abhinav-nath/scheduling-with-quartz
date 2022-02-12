@@ -4,7 +4,9 @@ import com.codecafe.scheduling.entity.SourceProduct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
+import org.springframework.batch.item.database.Order;
+import org.springframework.batch.item.database.support.PostgresPagingQueryProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -13,11 +15,13 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Slf4j
 @StepScope
 @Component
-public class SourceProductsReader extends JdbcCursorItemReader<SourceProduct> {
+public class SourceProductsReader extends JdbcPagingItemReader<SourceProduct> {
 
     private ExecutionContext executionContext;
 
@@ -26,21 +30,27 @@ public class SourceProductsReader extends JdbcCursorItemReader<SourceProduct> {
         log.info("==> Entered inside SourceProductsReader constructor");
         this.executionContext = executionContext;
         setDataSource(dataSource);
-        setSql(prepareSql());
+        setQueryProvider(createQuery());
+        setPageSize(100);
         //setFetchSize(100);
         setRowMapper(new SourceProductRowMapper());
         log.info("<== Exiting from SourceProductsReader constructor");
     }
 
-    private String prepareSql() {
-        String sql = "SELECT * FROM source_products";
+    private PostgresPagingQueryProvider createQuery() {
+        final PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
+        final Map<String, Order> sortKeys = new LinkedHashMap<>();
+        sortKeys.put("modified_at", Order.ASCENDING);
+        queryProvider.setSortKeys(sortKeys);
+        queryProvider.setSelectClause("*");
+        queryProvider.setFromClause("source_products");
+
         Date lastCompletedJobTime = (Date) executionContext.get("lastCompletedJobTime");
         if (lastCompletedJobTime != null) {
-            sql = new StringBuilder("SELECT * FROM source_products sp WHERE sp.modified_at >= '")
-                    .append(lastCompletedJobTime)
-                    .append("' ORDER BY sp.modified_at ASC").toString();
+            queryProvider.setWhereClause("modified_at >= '" + lastCompletedJobTime + "'");
         }
-        return sql;
+
+        return queryProvider;
     }
 
     public static class SourceProductRowMapper implements RowMapper<SourceProduct> {
