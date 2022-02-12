@@ -37,9 +37,9 @@ INSERT INTO source_products VALUES(5, 'eraser', now(), now(), false);
 
 -- Update product in source_products table
 
-UPDATE source_products SET name = 'keyboard' WHERE id = 1;
+UPDATE source_products SET name = 'keyboard', modified_at = now() WHERE id = 1;
 
-UPDATE source_products SET name = 'mouse' WHERE id = 2;
+UPDATE source_products SET name = 'mouse', modified_at = now() WHERE id = 2;
 
 
 -- Delete product in source_products table

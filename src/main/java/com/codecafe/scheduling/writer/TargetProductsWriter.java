@@ -32,7 +32,7 @@ public class TargetProductsWriter implements ItemWriter<TargetProductWithAction>
             log.info("TargetProductsWriter::write handling - item [{}] id [{}]", item.getTargetProduct().getName(), item.getTargetProduct().getId());
 
             if (item.isDeleted())
-                targetProductsRepository.delete(item.getTargetProduct());
+                targetProductsRepository.deleteById(item.getTargetProduct().getId());
             else
                 targetProducts.add(item.getTargetProduct());
         });
