@@ -43,6 +43,11 @@ Step executions are represented by objects of the `StepExecution` class.
 Each execution contains a reference to its corresponding step and `JobExecution` and transaction related data, such as commit and rollback counts and start and end times.
 Additionally, each step execution contains an `ExecutionContext`, which contains any data a developer needs to have persisted across batch runs, such as statistics or state information needed to restart.
 
+---
+<p align="center">
+  ⭐ Star this repository — it helps!
+</p>
+
 ![Job steps](./images/job-steps.png "Job steps")
 
 Steps are executed sequentially.
